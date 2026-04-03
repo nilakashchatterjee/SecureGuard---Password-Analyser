@@ -22,7 +22,7 @@ Implements k-anonymity protocol using SHA-1 hashing to query breach databases wh
 
 | Component | Technology |
 |-----------|-----------|
-| Backend | Python 3.11+ with Flask Framework |
+| Backend | Python 3.8+ with Flask Framework |
 | Frontend | HTML5, CSS3 (Flexbox), Vanilla JavaScript |
 | Password Strength | zxcvbn (v4.4.2) |
 | Breach Database | HIBP (Have I Been Pwned) API |
@@ -36,43 +36,39 @@ Implements k-anonymity protocol using SHA-1 hashing to query breach databases wh
 - **Git** (for version control)
 - **Modern web browser** (Chrome, Firefox, Edge, Safari)
 
-## 🚀 Quick Start
+## 🚀 Installation & Setup
 
-### Windows Setup
-
-**Step 1:** Navigate to project directory
-```powershell
-cd "e:\PROGRAM CODES\password_checker"
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/nilakashchatterjee/SecureGuard---Password-Analyser.git
+cd SecureGuard---Password-Analyser
 ```
 
-**Step 2:** Create and activate Python virtual environment
+### Step 2: Create and Activate Virtual Environment
+
+**Windows:**
 ```powershell
 python -m venv venv
-.\venv\Scripts\Activate.ps1
+venv\Scripts\activate
 ```
 
-> **Tip:** If you encounter execution policy errors, run PowerShell as Administrator
-
-**Step 3:** Install project dependencies
-```powershell
-pip install flask flask-cors requests
+**macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-### Start the Application
+### Step 3: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-**Terminal 1 - Start Flask Backend:**
-```powershell
+### Step 4: Run the Application
+```bash
 python app.py
 ```
 
-You should see:
-```
- * Serving Flask app 'app'
- * Debug mode: on
- * Running on http://127.0.0.1:5000
-```
-
-**Terminal 2 - Open in Browser:**
+Navigate to `http://127.0.0.1:5000` in your web browser.
 Navigate to → `http://127.0.0.1:5000/`
 
 ## 📖 How It Works
@@ -163,16 +159,16 @@ Validates a password against the HIBP breach database using k-anonymity.
 ## 📁 Project Structure
 
 ```
-password_checker/
+SecureGuard---Password-Analyser/
 ├── app.py                    # Flask backend server
 ├── README.md                 # Project documentation
-├── index.html                # (served from app.py + root)
+├── requirements.txt          # Python dependencies
 ├── venv/                     # Python virtual environment (gitignored)
 ├── static/
 │   ├── script.js            # Frontend password logic & HIBP integration
 │   └── style.css            # Responsive UI styling
 └── templates/
-    └── index.html           # HTML frontend (optional if served from root)
+    └── index.html           # HTML frontend
 ```
 
 ## ⚠️ Important Notes
