@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureGuard - Password Checker</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js"></script>
+</head>
+<body>
+    <main class="hero">
+        <div class="header-text">
+            <h1>SecureGuard - Password Analyzer</h1>
+            <p>Evaluate cryptographic strength and check against known data breaches.</p>
+        </div>
+
+        <div class="search-container">
+            <input type="password" id="password-input" placeholder="Password to check">
+            
+            <button type="button" id="toggle-btn" class="toggle-btn" aria-label="Toggle visibility">
+                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            </button>
+            
+            <button id="check-btn">Analyze</button>
+        </div>
+    </main>
+
+    <section id="results-section" class="results-container hidden">
+        <div class="score-display">
+            <h2 id="strength-text">Awaiting Input</h2>
+        </div>
+        
+        <div class="big-meter">
+            <div id="strength-bar" class="bar"></div>
+        </div>
+        
+        <div class="details">
+            <div class="detail-card">
+                <h3>Structural Feedback</h3>
+                <p id="feedback">Run an analysis to see structural suggestions.</p>
+            </div>
+            <div class="detail-card">
+                <h3>Breach History</h3>
+                <p id="breach-status">Run an analysis to query security databases.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

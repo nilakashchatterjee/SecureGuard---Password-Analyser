@@ -1,0 +1,184 @@
+/* A global reset that ensures padding and borders do not increase the total size of elements */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Use the standard system fonts of whatever operating system the user has */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Style the main background and center everything vertically */
+body {
+    background-color: #0b1120; /* Dark navy background */
+    color: #f8fafc; /* Light gray/white text */
+    display: flex; /* Use Flexbox to align child elements */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: flex-end; /* Align content at the bottom */
+    align-items: center; /* Center children horizontally */
+    min-height: 100vh; /* Make the body take up at least 100% of the screen height */
+    padding: 2rem;
+}
+
+/* Center the top text and limit its maximum width for readability */
+.hero {
+    text-align: center;
+    /* margin-top: 50px; */
+    padding-top: 30px ;
+    width: 100%;
+    max-width: 800px;
+}
+
+.header-text h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+.header-text p {
+    font-size: 1.25rem;
+    color: #94a3b8; /* Muted gray for secondary text */
+    margin-bottom: 3rem;
+}
+
+/* Creates the white "pill" shape that holds the input and buttons */
+.search-container {
+    display: flex; /* Aligns the input and buttons in a horizontal row */
+    background: #ffffff;
+    padding: 0.4rem;
+    border-radius: 50px; /* Highly rounded corners create the pill look */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Adds a drop shadow for depth */
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Style the text box where the user types */
+.search-container input {
+    flex-grow: 1; /* Tells the input to stretch and fill all available empty space inside the pill */
+    border: none;
+    outline: none; /* Removes the default blue glow when clicked */
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 50px 0 0 50px; /* Round the left corners to match the pill container */
+    color: #0f172a; /* Dark text for the white background */
+}
+
+/* Style the transparent eye icon button */
+.toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 0 1rem;
+    cursor: pointer; /* Change mouse to a hand icon on hover */
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease; /* Smoothly fade color changes */
+}
+
+.toggle-btn:hover {
+    color: #0f172a; /* Darken the icon when hovered */
+}
+
+.toggle-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Style the blue 'Analyze' button */
+.search-container button#check-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px; /* Completely round all corners */
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.search-container button#check-btn:hover {
+    background: #1d4ed8; /* Slightly darker blue on hover */
+}
+
+/* Style the box that holds all the charts and feedback */
+.results-container {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 800px;
+    background: #1e293b;
+    padding: 3rem;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    /* transition tells CSS to animate opacity and transform whenever they change */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* A utility class. When added via JavaScript, it hides the element and pushes it down 20px */
+.results-container.hidden {
+    opacity: 0;
+    pointer-events: none; /* Prevent users from clicking hidden elements */
+    transform: translateY(20px);
+}
+
+.score-display h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* The empty track for the progress bar */
+.big-meter {
+    height: 24px;
+    background: #0f172a;
+    border-radius: 12px;
+    overflow: hidden; /* Ensures the colored bar inside doesn't spill out of the rounded corners */
+    margin-bottom: 2.5rem;
+    border: 1px solid #334155;
+}
+
+/* The colored portion of the progress bar */
+.bar {
+    height: 100%;
+    width: 0%; /* Starts at 0 width. JavaScript will change this inline. */
+    /* Animate the width smoothly to create a "filling up" effect */
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.4s ease;
+}
+
+/* Container for the two side-by-side information cards */
+.details {
+    display: flex;
+    gap: 2rem; /* Add exactly 2rem of space between the two cards */
+}
+
+/* Style the individual info cards */
+.detail-card {
+    flex: 1; /* Tells both cards to take up exactly equal amounts of space */
+    background: #0f172a;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+.detail-card h3 {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.detail-card p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Responsive design: If the screen is narrower than 600px (like a phone), stack the cards vertically instead of horizontally */
+@media (max-width: 600px) {
+    .details {
+        flex-direction: column;
+    }
+}
