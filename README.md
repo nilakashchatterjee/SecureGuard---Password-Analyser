@@ -6,7 +6,8 @@
 
 SecureGuard is a full-stack web application designed to help users assess password security by checking against the Have I Been Pwned (HIBP) database of compromised credentials. The application combines real-time password strength analysis with privacy-preserving breach detection, ensuring that user passwords are never transmitted in plain text to external APIs.
 
-**Key Differentiator:** Implements k-anonymity protocol using SHA-1 hashing to query breach databases while protecting user privacy—only password prefixes are sent to HIBP, making the system secure even in untrusted network environments.
+**Key Differentiator:** 
+Implements k-anonymity protocol using SHA-1 hashing to query breach databases while protecting user privacy—only password prefixes are sent to HIBP, making the system secure even in untrusted network environments.
 
 ## ✨ Features
 
