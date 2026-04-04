@@ -5,9 +5,16 @@ const toggleBtn = document.getElementById('toggle-btn');
 const eyeIcon = document.getElementById('eye-icon');
 const resultsSection = document.getElementById('results-section');
 const strengthText = document.getElementById('strength-text');
-const strengthBar = document.getElementById('strength-bar');
+const strengthBar = document.getElementById('strength-bar'); // Now points to meter-fill
 const feedback = document.getElementById('feedback');
 const breachStatus = document.getElementById('breach-status');
+
+// Requirements elements
+const reqLength = document.getElementById('req-length');
+const reqUppercase = document.getElementById('req-uppercase');
+const reqLowercase = document.getElementById('req-lowercase');
+const reqNumber = document.getElementById('req-number');
+const reqSymbol = document.getElementById('req-symbol');
 
 // Define arrays that map a numerical score (0 to 4) to specific text and colors.
 const labels = ['Critically Weak', 'Weak', 'Moderate', 'Strong', 'Unbreakable'];
@@ -34,6 +41,39 @@ toggleBtn.addEventListener('click', () => {
         `;
     }
 });
+
+// Step 2.5: Real-time password requirements checker
+function updateRequirements(password) {
+    const requirements = {
+        length: password.length >= 12,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        symbol: /[!@#$%^&*()_+\-=\[\]{};:\'"\\|,.<>\/?]/.test(password)
+    };
+    
+    updateRequirementIcon(reqLength, requirements.length);
+    updateRequirementIcon(reqUppercase, requirements.uppercase);
+    updateRequirementIcon(reqLowercase, requirements.lowercase);
+    updateRequirementIcon(reqNumber, requirements.number);
+    updateRequirementIcon(reqSymbol, requirements.symbol);
+    
+    return requirements;
+}
+
+function updateRequirementIcon(element, isMet) {
+    if (isMet) {
+        element.classList.add('met');
+    } else {
+        element.classList.remove('met');
+    }
+}
+
+// Listen for real-time input changes
+input.addEventListener('input', () => {
+    if (!input.value) return;
+    updateRequirements(input.value);
+})
 
 // Step 3: Define the core analysis logic
 // We use 'async' because we need to make an HTTP network request, which takes time.
@@ -65,7 +105,8 @@ async function triggerAnalysis() {
     strengthBar.style.backgroundColor = colors[score];
     
     // Join the array of text suggestions provided by zxcvbn into a single string. Provide a fallback if array is empty.
-    feedback.innerText = result.feedback.suggestions.join(' ') || 'Password structure is mathematically sound.';
+    const feedbackText = result.feedback.suggestions.join(' ') || 'Password structure is mathematically sound.';
+    feedback.textContent = feedbackText; // Use textContent to prevent XSS
     feedback.style.color = '#f8fafc';
 
     // -- External Execution (Slow) --
@@ -87,12 +128,49 @@ async function triggerAnalysis() {
 
             // Check the count returned by Python
             if (data.count > 0) {
-                // toLocaleString() adds commas to large numbers (e.g., 1,500,000)
-                breachStatus.innerHTML = `<strong>Compromised.</strong> Found in ${data.count.toLocaleString()} known data breaches. Do not use.`;
+                // Safely create DOM elements to prevent XSS
+                breachStatus.innerHTML = ''; // Clear previous content
+                const strong = document.createElement('strong');
+                strong.textContent = 'Compromised. ';
+                const text = document.createTextNode(`Found in ${data.count.toLocaleString()} known data breaches. Do not use.`);
+                breachStatus.appendChild(strong);
+                breachStatus.appendChild(text);
                 breachStatus.style.color = '#ef4444'; // Red
             } else {
-                breachStatus.innerHTML = '<strong>Secure.</strong> No matches found in known data breaches.';
+                breachStatus.innerHTML = ''; // Clear previous content
+                const strong = document.createElement('strong');
+                strong.textContent = 'Secure. ';
+                const text = document.createTextNode('No matches found in known data breaches.');
+                breachStatus.appendChild(strong);
+                breachStatus.appendChild(text);
                 breachStatus.style.color = '#22c55e'; // Green
+            }
+            
+            // Display strength requirements status
+            if (data.strength_requirements) {
+                const reqStatus = data.strength_requirements;
+                const allMet = data.meets_all_requirements;
+                
+                // Add strength requirements note
+                const br = document.createElement('br');
+                const reqNote = document.createElement('div');
+                reqNote.style.marginTop = '0.75rem';
+                reqNote.style.fontSize = '0.85rem';
+                reqNote.style.opacity = '0.8';
+                
+                const metCount = Object.values(reqStatus).filter(v => v).length;
+                const totalReqs = Object.keys(reqStatus).length;
+                
+                if (allMet) {
+                    reqNote.textContent = `✓ All ${totalReqs} security requirements met!`;
+                    reqNote.style.color = '#22c55e';
+                } else {
+                    reqNote.textContent = `${metCount}/${totalReqs} security requirements met`;
+                    reqNote.style.color = '#f59e0b';
+                }
+                
+                breachStatus.appendChild(br);
+                breachStatus.appendChild(reqNote);
             }
         } catch (error) {
             // If the fetch fails (e.g., the Python server is not running), show an error message

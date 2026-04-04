@@ -22,23 +22,22 @@ body {
 /* Center the top text and limit its maximum width for readability */
 .hero {
     text-align: center;
-    /* margin-top: 50px; */
-    padding-top: 30px ;
+    padding-top: 20px;
     width: 100%;
     max-width: 800px;
 }
 
 .header-text h1 {
-    font-size: 3rem;
+    font-size: 2.2rem;
     font-weight: 800;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     letter-spacing: -1px;
 }
 
 .header-text p {
-    font-size: 1.25rem;
+    font-size: 1rem;
     color: #94a3b8; /* Muted gray for secondary text */
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 /* Creates the white "pill" shape that holds the input and buttons */
@@ -104,14 +103,9 @@ body {
 
 /* Style the box that holds all the charts and feedback */
 .results-container {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     width: 100%;
     max-width: 800px;
-    background: #1e293b;
-    padding: 3rem;
-    border-radius: 16px;
-    border: 1px solid #334155;
-    /* transition tells CSS to animate opacity and transform whenever they change */
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
@@ -122,63 +116,155 @@ body {
     transform: translateY(20px);
 }
 
-.score-display h2 {
-    font-size: 2.5rem;
+/* Premium Results Card */
+.results-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Strength Section */
+.strength-section {
     margin-bottom: 1.5rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    border-bottom: 1px ;
+    padding-bottom: 1.5rem;
 }
 
-/* The empty track for the progress bar */
-.big-meter {
-    height: 24px;
-    background: #0f172a;
-    border-radius: 12px;
-    overflow: hidden; /* Ensures the colored bar inside doesn't spill out of the rounded corners */
-    margin-bottom: 2.5rem;
-    border: 1px solid #334155;
-}
-
-/* The colored portion of the progress bar */
-.bar {
-    height: 100%;
-    width: 0%; /* Starts at 0 width. JavaScript will change this inline. */
-    /* Animate the width smoothly to create a "filling up" effect */
-    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.4s ease;
-}
-
-/* Container for the two side-by-side information cards */
-.details {
-    display: flex;
-    gap: 2rem; /* Add exactly 2rem of space between the two cards */
-}
-
-/* Style the individual info cards */
-.detail-card {
-    flex: 1; /* Tells both cards to take up exactly equal amounts of space */
-    background: #0f172a;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid #334155;
-}
-
-.detail-card h3 {
-    font-size: 0.9rem;
-    color: #94a3b8;
+.strength-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
     margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.detail-card p {
-    font-size: 1.1rem;
-    line-height: 1.5;
+/* Modern Strength Meter */
+.strength-meter {
+    height: 6px;
+    background: #0f172a;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid #334155;
 }
 
-/* Responsive design: If the screen is narrower than 600px (like a phone), stack the cards vertically instead of horizontally */
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.4s ease;
+    border-radius: 3px;
+}
+
+/* Compact Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.2fr;
+    gap: 1.5rem;
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-column h4 {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* Compact Requirements List */
+.requirements-list.compact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.requirements-list.compact li {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    padding: 0.4rem 0;
+}
+
+.req-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 0.6rem;
+    border-radius: 50%;
+    background-color: #334155;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.req-icon.met {
+    background-color: #22c55e;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.req-icon.met::after {
+    content: '✓';
+}
+
+/* Feedback & Breach Text */
+.feedback-text,
+.breach-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.breach-text {
+    font-size: 0.9rem;
+}
+
+.breach-text strong {
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .info-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .info-column:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+}
+
 @media (max-width: 600px) {
-    .details {
-        flex-direction: column;
+    .results-card {
+        padding: 1.5rem;
+    }
+    
+    .strength-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .info-column:nth-child(3) {
+        grid-column: auto;
     }
 }
