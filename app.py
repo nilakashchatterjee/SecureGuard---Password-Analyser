@@ -34,6 +34,47 @@ def validate_password_strength(password):
     all_met = all(requirements.values())
     return requirements, all_met
 
+def calculate_realistic_strength(requirements_met, zxcvbn_score=None):
+    """
+    Calculate realistic password strength combining structural requirements and entropy.
+    
+    Rules for real-world security:
+    - If all 5 requirements NOT met: max strength is 1 (Weak)
+    - If all 5 requirements met but entropy is low: strength is 2 (Moderate)
+    - If all 5 requirements met and entropy is high: use entropy score (3-4)
+    
+    Args:
+        requirements_met (int): Number of requirements met (0-5)
+        zxcvbn_score (int): Entropy score from zxcvbn (0-4), optional
+    
+    Returns:
+        dict: Strength assessment with score and explanation
+    """
+    strength_levels = {
+        0: {'label': 'Critically Weak', 'score': 0},
+        1: {'label': 'Weak', 'score': 1},
+        2: {'label': 'Moderate', 'score': 2},
+        3: {'label': 'Strong', 'score': 3},
+        4: {'label': 'Unbreakable', 'score': 4}
+    }
+    
+    if requirements_met < 5:
+        # Missing structural requirements = not truly secure
+        return {
+            'score': 1,
+            'label': 'Weak',
+            'reason': f'Missing {5 - requirements_met} security requirement(s)',
+            'is_compliant': False
+        }
+    else:
+        # All requirements met
+        return {
+            'score': 3 if zxcvbn_score is None else max(2, zxcvbn_score),
+            'label': 'Strong' if zxcvbn_score is None or zxcvbn_score >= 3 else 'Moderate',
+            'reason': 'Meets all security requirements',
+            'is_compliant': True
+        }
+
 # Serve the main HTML interface
 @app.route('/')
 def index():
@@ -61,8 +102,10 @@ def check_breach():
     
     # Check password strength requirements
     strength_reqs, all_met = validate_password_strength(password)
-
-    # Generate SHA-1 hash and split for k-anonymity
+    requirements_met_count = sum(strength_reqs.values())
+    
+    # Calculate realistic strength score
+    strength_assessment = calculate_realistic_strength(requirements_met_count)
     sha1_password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
     prefix = sha1_password[:5]  # Send to API
     suffix = sha1_password[5:]  # Keep locally for verification
@@ -86,7 +129,9 @@ def check_breach():
     return jsonify({
         "count": count,
         "strength_requirements": strength_reqs,
-        "meets_all_requirements": all_met
+        "meets_all_requirements": all_met,
+        "requirements_met_count": requirements_met_count,
+        "strength_assessment": strength_assessment
     })
 
 @app.route('/password-requirements', methods=['GET'])

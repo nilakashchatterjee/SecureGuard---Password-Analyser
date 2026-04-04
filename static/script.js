@@ -94,19 +94,51 @@ async function triggerAnalysis() {
     // -- Local Execution (Fast) --
     // Run the zxcvbn library against the password to check for entropy, patterns, and dictionary words.
     const result = zxcvbn(pwd);
-    // Score is an integer from 0 to 4.
-    const score = result.score;
-
-    // Update the UI based on the array indexes matching the score
-    strengthText.innerText = labels[score];
-    strengthText.style.color = colors[score];
-    // Calculate the width. If score is 0, width is 20%. If score is 4, width is 100%.
-    strengthBar.style.width = `${(score + 1) * 20}%`;
-    strengthBar.style.backgroundColor = colors[score];
+    let zxcvbnScore = result.score; // Raw zxcvbn score (0-4)
     
-    // Join the array of text suggestions provided by zxcvbn into a single string. Provide a fallback if array is empty.
-    const feedbackText = result.feedback.suggestions.join(' ') || 'Password structure is mathematically sound.';
-    feedback.textContent = feedbackText; // Use textContent to prevent XSS
+    // Get real-time requirements check
+    const reqCheck = updateRequirements(pwd);
+    const requirementsMetCount = Object.values(reqCheck).filter(v => v).length;
+    const allRequirementsMet = requirementsMetCount === 5;
+    
+    // Adjust strength based on real-life security scenario
+    // Rules:
+    // - If all 5 requirements NOT met: max strength is "Weak" (1)
+    // - If all 5 requirements met but zxcvbn < 3: cap at "Moderate" (2)
+    // - If all 5 requirements met and zxcvbn >= 3: use zxcvbn score
+    let adjustedScore = zxcvbnScore;
+    
+    if (!allRequirementsMet) {
+        // Missing structural requirements = not truly secure
+        adjustedScore = Math.min(zxcvbnScore, 1);
+    } else if (allRequirementsMet && zxcvbnScore < 3) {
+        // Has requirements but low entropy = Moderate at best
+        adjustedScore = 2;
+    }
+    
+    // Update the UI with adjusted score
+    strengthText.innerText = labels[adjustedScore];
+    strengthText.style.color = colors[adjustedScore];
+    
+    // Calculate the width based on adjusted score
+    strengthBar.style.width = `${(adjustedScore + 1) * 20}%`;
+    strengthBar.style.backgroundColor = colors[adjustedScore];
+    
+    // Add requirement status indicator to feedback
+    let feedbackText = result.feedback.suggestions.join(' ') || 'Password structure is mathematically sound.';
+    let requirementNote = '';
+    
+    if (!allRequirementsMet) {
+        const missingCount = 5 - requirementsMetCount;
+        requirementNote = ` ⚠️ Missing ${missingCount} requirement(s) - strength capped for security compliance`;
+    } else {
+        if (zxcvbnScore >= 3) {
+            requirementNote = ' All security requirements met + high entropy = Excellent';
+        } else {
+            requirementNote = ' All requirements met but consider adding more complexity for entropy';
+        }
+    }
+    feedback.textContent = feedbackText + requirementNote; // Use textContent to prevent XSS
     feedback.style.color = '#f8fafc';
 
     // -- External Execution (Slow) --
@@ -150,22 +182,21 @@ async function triggerAnalysis() {
             if (data.strength_requirements) {
                 const reqStatus = data.strength_requirements;
                 const allMet = data.meets_all_requirements;
+                const requirementsCount = data.requirements_met_count;
+                const strengthAssessment = data.strength_assessment;
                 
                 // Add strength requirements note
                 const br = document.createElement('br');
                 const reqNote = document.createElement('div');
                 reqNote.style.marginTop = '0.75rem';
                 reqNote.style.fontSize = '0.85rem';
-                reqNote.style.opacity = '0.8';
-                
-                const metCount = Object.values(reqStatus).filter(v => v).length;
-                const totalReqs = Object.keys(reqStatus).length;
+                reqNote.style.opacity = '0.9';
                 
                 if (allMet) {
-                    reqNote.textContent = `✓ All ${totalReqs} security requirements met!`;
+                    reqNote.textContent = `✓ All 5 security requirements met`;
                     reqNote.style.color = '#22c55e';
                 } else {
-                    reqNote.textContent = `${metCount}/${totalReqs} security requirements met`;
+                    reqNote.textContent = `${requirementsCount}/5 security requirements met`;
                     reqNote.style.color = '#f59e0b';
                 }
                 
